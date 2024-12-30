@@ -1,0 +1,3 @@
+# Todoist Clone
+- Expo
+- Typescript
