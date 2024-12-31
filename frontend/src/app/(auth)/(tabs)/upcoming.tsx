@@ -1,9 +1,11 @@
 import { StyleSheet, Text, View } from "react-native";
 
-export default function TabOneScreen() {
+import { Colors } from "@/src/constants/Colors";
+
+export default function Upcoming() {
   return (
     <View style={styles.container}>
-      <Text style={styles.title}>Tab One</Text>
+      <Text style={styles.title}>Upcoming</Text>
     </View>
   );
 }
@@ -15,7 +17,8 @@ const styles = StyleSheet.create({
     justifyContent: "center",
   },
   title: {
-    fontSize: 20,
-    fontWeight: "bold",
+    fontFamily: "QuicksandBold",
+    fontSize: 50,
+    color: Colors.disabled
   },
 });

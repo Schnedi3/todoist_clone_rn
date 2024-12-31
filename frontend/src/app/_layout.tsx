@@ -36,7 +36,7 @@ function RootLayout(): JSX.Element {
 
   useEffect(() => {
     if (isSignedIn) {
-      router.replace("/(auth)/(tabs)/one");
+      router.replace("/(auth)/(tabs)/today");
     } else {
       router.replace("/login");
     }
