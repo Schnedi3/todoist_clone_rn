@@ -1,29 +1,22 @@
 import { StyleSheet, Text, View } from "react-native";
 import { Stack } from "expo-router";
-import { useRouter } from "expo-router";
 
+import { NewHeader } from "@/src/components/task/NewHeader";
 import { Colors } from "@/src/constants/Colors";
-import { BrowseHeader } from "@/src/components/browse/BrowseHeader";
-import { CreateWidget } from "@/src/components/CreateWidget";
 
-export default function Browse() {
-  const router = useRouter();
-
-  const handleCreate = () => {
-    router.push("/task/new-project");
-  };
-
+export default function NewProject() {
   return (
     <>
       <Stack.Screen
-        options={{ headerShown: true, header: () => <BrowseHeader /> }}
+        options={{
+          headerShown: true,
+          header: () => <NewHeader title="New project" />,
+        }}
       />
 
       <View style={styles.container}>
-        <Text style={styles.title}>Browse</Text>
+        <Text style={styles.title}>New project</Text>
       </View>
-
-      <CreateWidget onPress={handleCreate} />
     </>
   );
 }
