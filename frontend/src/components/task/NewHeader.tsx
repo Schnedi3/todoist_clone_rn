@@ -3,7 +3,13 @@ import { useRouter } from "expo-router";
 
 import { Colors } from "@/src/constants/Colors";
 
-export const NewHeader = ({ title }: { title: string }) => {
+export const NewHeader = ({
+  title,
+  onPress,
+}: {
+  title: string;
+  onPress: () => void;
+}) => {
   const router = useRouter();
 
   return (
@@ -19,7 +25,10 @@ export const NewHeader = ({ title }: { title: string }) => {
 
       <Text style={styles.title}>{title}</Text>
 
-      <Pressable style={({ pressed }) => [{ opacity: pressed ? 0.5 : 1 }]}>
+      <Pressable
+        style={({ pressed }) => [{ opacity: pressed ? 0.5 : 1 }]}
+        onPress={() => onPress()}
+      >
         <Text style={[styles.buttonText, { color: Colors.accent }]}>
           Create
         </Text>
