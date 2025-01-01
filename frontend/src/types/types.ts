@@ -14,3 +14,9 @@ export interface ITodo {
   project_name: string;
   project_color: string;
 }
+
+export interface IProject {
+  id: number;
+  name: string;
+  color: string;
+}
