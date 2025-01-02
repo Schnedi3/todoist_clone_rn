@@ -1,4 +1,5 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useRouter } from "expo-router";
 
 import { baseURL } from "@/src/constants/baseURL";
 
@@ -10,6 +11,43 @@ export const useGetTodos = () => {
       return response.json();
     },
     initialData: [],
+  });
+};
+
+export const useAddTodo = () => {
+  const queryClient = useQueryClient();
+  const router = useRouter();
+
+  return useMutation({
+    mutationFn: async ({
+      title,
+      description,
+      projectId,
+      priority,
+      dueDate,
+    }: {
+      title: string;
+      description: string;
+      projectId: number;
+      priority: string;
+      dueDate: string;
+    }) => {
+      await fetch(`${baseURL}/todo`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          title,
+          description,
+          projectId,
+          priority,
+          dueDate,
+        }),
+      });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["todos"] });
+      router.dismiss();
+    },
   });
 };
 
