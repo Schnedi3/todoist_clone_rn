@@ -26,6 +26,19 @@ export const getTodosDB = async () => {
   return result.rows;
 };
 
+export const getTodoByIdDB = async (id: number) => {
+  const getTodoByIdQuery = `
+    SELECT todo.*,
+      project.name AS project_name,
+      project.color AS project_color
+    FROM todo
+    JOIN project ON todo.project_id = project.id
+    WHERE todo.id = $1`;
+
+  const result = await pool.query(getTodoByIdQuery, [id]);
+  return result.rows[0];
+};
+
 export const addTodoDB = async (
   title: string,
   description: string,
@@ -44,6 +57,30 @@ export const addTodoDB = async (
     projectId,
     priority,
     dueDate,
+  ]);
+};
+
+export const updateTodoDB = async (
+  title: string,
+  description: string,
+  projectId: number,
+  priority: string,
+  dueDate: string,
+  id: number
+) => {
+  const updateTodoQuery = `
+    UPDATE todo
+    SET title = $1, description = $2, project_id = $3, priority = $4, due_date = $5
+    WHERE id = $6
+    RETURNING *`;
+
+  await pool.query(updateTodoQuery, [
+    title,
+    description,
+    projectId,
+    priority,
+    dueDate,
+    id,
   ]);
 };
 
