@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View } from "react-native";
-import { Stack } from "expo-router";
+import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Stack, useRouter } from "expo-router";
 import { format } from "date-fns";
 import {
   AgendaList,
@@ -14,6 +14,7 @@ import { ITodos } from "@/src/types/types";
 import { useGetTodos } from "@/src/api/todo";
 
 export default function Upcoming() {
+  const router = useRouter();
   const { data: todos } = useGetTodos();
 
   const formatDate = (date: string) => format(new Date(date), "yyyy-MM-dd");
@@ -38,6 +39,10 @@ export default function Upcoming() {
     });
 
     return marked;
+  };
+
+  const handleUpdateTodo = (id: number) => {
+    router.push({ pathname: "/task/new-todo", params: { id } });
   };
 
   return (
@@ -89,7 +94,13 @@ export default function Upcoming() {
         <AgendaList
           sections={filteredTodos}
           renderItem={({ item }) => (
-            <View style={styles.projectContainer}>
+            <Pressable
+              style={({ pressed }) => [
+                styles.projectContainer,
+                { opacity: pressed ? 0.5 : 1 },
+              ]}
+              onPress={() => handleUpdateTodo(item.id)}
+            >
               <View>
                 <Text style={styles.todoTitle}>{item.title}</Text>
                 <Text style={styles.todoDescription}>{item.description}</Text>
@@ -99,7 +110,7 @@ export default function Upcoming() {
                 <Text style={{ color: item.project_color }}>#</Text>
                 <Text style={styles.todoProject}>{item.project_name}</Text>
               </View>
-            </View>
+            </Pressable>
           )}
           dayFormatter={(date) => format(new Date(date), "eee · dd MMM")}
           sectionStyle={styles.section}

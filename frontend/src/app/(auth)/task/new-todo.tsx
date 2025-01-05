@@ -7,7 +7,7 @@ import {
   TextInput,
   View,
 } from "react-native";
-import { Stack } from "expo-router";
+import { Stack, useLocalSearchParams } from "expo-router";
 import { Ionicons } from "@expo/vector-icons";
 import { Calendar, DateData } from "react-native-calendars";
 import { format } from "date-fns";
@@ -15,7 +15,7 @@ import { format } from "date-fns";
 import { NewHeader } from "@/src/components/task/NewHeader";
 import { Colors } from "@/src/constants/Colors";
 import { useGetProjects } from "@/src/api/project";
-import { useAddTodo } from "@/src/api/todo";
+import { useAddTodo, useGetTodoById, useUpdateTodo } from "@/src/api/todo";
 import { IProject } from "@/src/types/types";
 
 const today = format(new Date(), "yyyy-MM-dd");
@@ -29,6 +29,10 @@ export default function NewTodo() {
 
   const { data: projects } = useGetProjects();
   const { mutate: addTodo } = useAddTodo();
+
+  const { id } = useLocalSearchParams();
+  const { data: uniqueTodo } = useGetTodoById(Number(id));
+  const { mutate: updateTodo } = useUpdateTodo();
 
   useEffect(() => {}, [projects]);
 
@@ -47,13 +51,43 @@ export default function NewTodo() {
     });
   };
 
+  useEffect(() => {
+    if (uniqueTodo) {
+      setTitle(uniqueTodo.title);
+      setDescription(uniqueTodo.description);
+      setProjectId(uniqueTodo.project_id);
+      setPriority(uniqueTodo.priority);
+      setDueDate(format(new Date(uniqueTodo.due_date), "yyyy-MM-dd"));
+    }
+  }, [uniqueTodo]);
+
+  const handleUpdateTodo = () => {
+    if (!title || !description || !projectId || !priority || !dueDate) {
+      Alert.alert("Empty fields", "Please fill all the fields");
+      return;
+    }
+
+    updateTodo({
+      title,
+      description,
+      projectId,
+      priority,
+      dueDate,
+      id: Number(id),
+    });
+  };
+
   return (
     <>
       <Stack.Screen
         options={{
           headerShown: true,
           header: () => (
-            <NewHeader title="New task" onPress={handleCreateTodo} />
+            <NewHeader
+              title="New task"
+              onPress={uniqueTodo ? handleUpdateTodo : handleCreateTodo}
+              buttonTitle={uniqueTodo ? "Update" : "Create"}
+            />
           ),
         }}
       />
@@ -159,6 +193,8 @@ export default function NewTodo() {
             onDayPress={(day: DateData) => setDueDate(day.dateString)}
             hideArrows
             enableSwipeMonths={true}
+            current={dueDate}
+            key={dueDate}
             theme={{
               backgroundColor: "transparent",
               calendarBackground: "transparent",

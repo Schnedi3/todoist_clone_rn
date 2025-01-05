@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text, View } from "react-native";
 import BouncyCheckbox from "react-native-bouncy-checkbox";
 import Animated, {
   Easing,
@@ -6,6 +6,7 @@ import Animated, {
   useSharedValue,
   withTiming,
 } from "react-native-reanimated";
+import { useRouter } from "expo-router";
 
 import { ITodo } from "@/src/types/types";
 import { Colors } from "@/src/constants/Colors";
@@ -13,6 +14,7 @@ import { useCompleteTodo } from "@/src/api/todo";
 
 export const TodayItem = ({ todo }: { todo: ITodo }) => {
   const { mutate: completeTodo } = useCompleteTodo();
+  const router = useRouter();
 
   const handleCompleteTodo = (completed: boolean, id: number) => {
     heightAnim.value = withTiming(0, {
@@ -37,6 +39,10 @@ export const TodayItem = ({ todo }: { todo: ITodo }) => {
     };
   });
 
+  const handleUpdateTodo = (id: number) => {
+    router.push({ pathname: "/task/new-todo", params: { id } });
+  };
+
   return (
     <Animated.View style={[styles.container, AnimatedStyle]}>
       <BouncyCheckbox
@@ -50,15 +56,23 @@ export const TodayItem = ({ todo }: { todo: ITodo }) => {
         }}
       />
 
-      <View>
-        <Text style={styles.todoTitle}>{todo.title}</Text>
-        <Text style={styles.todoDescription}>{todo.description}</Text>
-      </View>
+      <Pressable
+        style={({ pressed }) => [
+          styles.projectContainer,
+          { opacity: pressed ? 0.5 : 1 },
+        ]}
+        onPress={() => handleUpdateTodo(todo.id)}
+      >
+        <View>
+          <Text style={styles.todoTitle}>{todo.title}</Text>
+          <Text style={styles.todoDescription}>{todo.description}</Text>
+        </View>
 
-      <View style={{ marginLeft: "auto", flexDirection: "row", gap: 5 }}>
-        <Text style={{ color: todo.project_color }}>#</Text>
-        <Text style={styles.todoProject}>{todo.project_name}</Text>
-      </View>
+        <View style={{ flexDirection: "row", gap: 5 }}>
+          <Text style={{ color: todo.project_color }}>#</Text>
+          <Text style={styles.todoProject}>{todo.project_name}</Text>
+        </View>
+      </Pressable>
     </Animated.View>
   );
 };
@@ -68,6 +82,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     gap: 15,
+  },
+  projectContainer: {
+    flex: 1,
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "space-between",
   },
   todoTitle: {
     fontFamily: "QuicksandSemi",

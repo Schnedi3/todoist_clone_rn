@@ -6,9 +6,11 @@ import { Colors } from "@/src/constants/Colors";
 export const NewHeader = ({
   title,
   onPress,
+  buttonTitle,
 }: {
   title: string;
   onPress: () => void;
+  buttonTitle: string;
 }) => {
   const router = useRouter();
 
@@ -30,7 +32,7 @@ export const NewHeader = ({
         onPress={() => onPress()}
       >
         <Text style={[styles.buttonText, { color: Colors.accent }]}>
-          Create
+          {buttonTitle}
         </Text>
       </Pressable>
     </View>
